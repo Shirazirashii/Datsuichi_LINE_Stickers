@@ -1,0 +1,2 @@
+# Datsuichi_LINE_Stickers
+ダツイチー新大陸公式LINEスタンプ｜特設ページ
