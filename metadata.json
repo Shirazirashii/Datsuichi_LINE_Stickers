@@ -1,0 +1,8 @@
+{
+  "name": "ダツイチ公式LINEスタンプ特設サイト_候補➀",
+  "description": "ダツイチの仲間たちが、LINEに小さなワクワクを届ける。「ダツイチー新大陸」公式LINEスタンプ一覧・キャラクター紹介特設ページ。",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

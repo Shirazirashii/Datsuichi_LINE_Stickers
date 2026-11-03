@@ -1,0 +1,301 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --font-main: "Zen Maru Gothic", "Hiragino Maru Gothic ProN", sans-serif;
+    --color-ink: #2c2825;
+  }
+
+  html {
+    font-family: var(--font-main);
+    color: var(--color-ink);
+    background-color: #efeae1;
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+    min-height: 100dvh;
+    position: relative;
+  }
+}
+
+/* ============================================================================
+ * 英語小見出し・日本語見出しタイポグラフィ
+ * ============================================================================ */
+.font-en-eyebrow {
+  letter-spacing: 0.14em;
+}
+
+.font-jp-display {
+  text-wrap: balance;
+}
+
+/* ============================================================================
+ * 手描きスクラッチ・ドローイング風リビール演出
+ * - 初回表示時（およびキャラ画像タップ切替時）に再生（2.2秒）
+ * - CSS mask-image とラフな斜めブラシリビールを組み合わせた軽量GPU処理
+ * - prefers-reduced-motion 有効時はアニメーションを無効化し即時表示
+ * ============================================================================ */
+.scratch-reveal-target .scratch-reveal-media {
+  opacity: 0;
+  transform: translateY(8px) scale(0.985);
+}
+
+.scratch-reveal-target.is-revealed .scratch-reveal-media {
+  /* 斜めストライプマスクで鉛筆・筆のハッチングで描き起こされるような質感を表現（SVGスケッチ線はマスク対象外にして上部からくっきり表示） */
+  -webkit-mask-image: 
+    linear-gradient(125deg, #000 0%, #000 38%, rgba(0, 0, 0, 0.65) 46%, rgba(0, 0, 0, 0.15) 53%, transparent 60%),
+    linear-gradient(112deg, #000 0%, #000 34%, rgba(0, 0, 0, 0.4) 48%, transparent 58%);
+  mask-image: 
+    linear-gradient(125deg, #000 0%, #000 38%, rgba(0, 0, 0, 0.65) 46%, rgba(0, 0, 0, 0.15) 53%, transparent 60%),
+    linear-gradient(112deg, #000 0%, #000 34%, rgba(0, 0, 0, 0.4) 48%, transparent 58%);
+  -webkit-mask-size: 320% 320%;
+  mask-size: 320% 320%;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  animation: scratchDrawingReveal 2.2s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  animation-delay: var(--scratch-delay, 0ms);
+}
+
+/* スクラッチ描画中に一度だけ走る手描き鉛筆ストロークオーバーレイ（案3：太さ1.5pxの単一パスによるひと筆書き） */
+.scratch-stroke-overlay {
+  pointer-events: none;
+}
+
+.scratch-stroke-overlay path {
+  opacity: 0;
+  stroke-dashoffset: 1;
+}
+
+.scratch-reveal-target.is-revealed .scratch-stroke-overlay path {
+  animation: pencilHatchSingle 2.0s cubic-bezier(0.25, 0.9, 0.35, 1) forwards;
+  animation-delay: var(--scratch-delay, 0ms);
+}
+
+@keyframes scratchDrawingReveal {
+  0% {
+    opacity: 0;
+    -webkit-mask-position: 100% 100%;
+    mask-position: 100% 100%;
+    transform: translateY(6px) scale(0.985) rotate(-0.8deg);
+    filter: sepia(0.25) contrast(1.08);
+  }
+  18% {
+    opacity: 1;
+    -webkit-mask-position: 76% 80%;
+    mask-position: 76% 80%;
+    transform: translateY(3px) scale(0.992) rotate(0.45deg);
+  }
+  48% {
+    -webkit-mask-position: 44% 40%;
+    mask-position: 44% 40%;
+    transform: translateY(1px) scale(0.998) rotate(-0.25deg);
+    filter: sepia(0.1) contrast(1.03);
+  }
+  78% {
+    -webkit-mask-position: 12% 14%;
+    mask-position: 12% 14%;
+    transform: translateY(0) scale(1.001) rotate(0.1deg);
+  }
+  100% {
+    opacity: 1;
+    -webkit-mask-position: 0% 0%;
+    mask-position: 0% 0%;
+    transform: translateY(0) scale(1) rotate(0deg);
+    filter: sepia(0) contrast(1);
+  }
+}
+
+/* 単一パスによるひと筆書き（上部から下部まで一度も止まらずに走り抜け、終盤に筆がスッと抜ける） */
+@keyframes pencilHatchSingle {
+  0% {
+    opacity: 0;
+    stroke-dashoffset: 1;
+  }
+  6% {
+    opacity: 0.56;
+  }
+  38% {
+    opacity: 0.48;
+  }
+  60% {
+    opacity: 0;
+  }
+  72% {
+    opacity: 0;
+    stroke-dashoffset: 0;
+  }
+  100% {
+    opacity: 0;
+    stroke-dashoffset: -0.45;
+  }
+}
+
+/* ============================================================================
+ * 白系UIの用途別スタイル
+ * ============================================================================ */
+
+/* LINEスタンプカード：整ったギャラリーカード（すっきりとした角丸＋やさしい浮遊影） */
+.ui-sticker-card {
+  background-color: rgba(253, 251, 247, 0.96);
+  border-radius: 24px;
+  border: 1px solid rgba(90, 78, 65, 0.11);
+  box-shadow:
+    0 12px 28px -8px rgba(44, 40, 37, 0.08),
+    0 2px 6px -1px rgba(44, 40, 37, 0.04);
+}
+
+/* キャラクター紹介の吹き出し：LINEらしさを手描き世界観で再解釈した丸みのある吹き出し */
+.ui-speech-bubble {
+  position: relative;
+  background-color: #ffffff;
+  border-radius: 26px 28px 26px 24px / 24px 26px 28px 26px;
+  border: 1.5px solid rgba(72, 64, 56, 0.14);
+  box-shadow: 0 8px 22px -6px rgba(44, 40, 37, 0.08);
+}
+
+/* 吹き出しの小さな尻尾（スマホ・タブレットは上向き、PC 2カラム時は左向き） */
+.ui-speech-tail {
+  position: absolute;
+  top: -11px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 22px;
+  height: 12px;
+  overflow: visible;
+}
+
+@media (min-width: 1024px) {
+  .ui-speech-tail {
+    top: 50%;
+    left: -16px;
+    transform: translateY(-50%) rotate(-90deg);
+  }
+}
+
+/* 固定背景の空気感にふわっと溶け込む白系ベール（THE WORLD 用：上下端がなめらかに溶け込む） */
+.ui-soft-veil-section {
+  background: linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.82) 14%,
+    rgba(255, 255, 255, 0.85) 86%,
+    rgba(255, 255, 255, 0) 100%
+  );
+}
+
+/* 固定背景の空気感にふわっと溶け込む白系ベール（CTA ＆ Footer 用：上端がなめらかに溶け込む） */
+.ui-soft-veil-bottom {
+  background: linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.82) 14%,
+    rgba(255, 255, 255, 0.88) 100%
+  );
+}
+
+/* Scroll Down ガイドの控えめなアニメーション */
+@keyframes gentleFloat {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(4px);
+  }
+}
+
+.animate-gentle-float {
+  animation: gentleFloat 2.6s ease-in-out infinite;
+}
+
+/* First View「ワク」「ワク」の時間差ホップ演出（キャラ登場の締めくくりに初回のみ1回ずつホップ・跳ね上がり時のみグリーン） */
+@keyframes wakuHop {
+  0%, 100% {
+    transform: translateY(0) scale(1);
+    color: inherit;
+  }
+  15%, 60% {
+    color: #06c755;
+  }
+  42% {
+    transform: translateY(-3px) scale(1.02, 1.04);
+    color: #06c755;
+  }
+  75% {
+    transform: translateY(0) scale(1.01, 0.98);
+    color: inherit;
+  }
+}
+
+.animate-waku-first {
+  display: inline-block;
+  animation: wakuHop 0.44s cubic-bezier(0.22, 1, 0.36, 1) 3.05s 1;
+}
+
+.animate-waku-second {
+  display: inline-block;
+  animation: wakuHop 0.44s cubic-bezier(0.22, 1, 0.36, 1) 3.19s 1;
+}
+
+/* Scroll Down ガイドの遅延表示（ワクワクのアニメーション終了[3.63s]から0.5秒後[4.13s]に表示） */
+@keyframes scrollDownAppear {
+  0% {
+    opacity: 0;
+    transform: translateY(-4px);
+    pointer-events: none;
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+  }
+}
+
+.animate-scroll-down-appear {
+  opacity: 0;
+  pointer-events: none;
+  animation: scrollDownAppear 0.5s ease-out 4.13s forwards;
+}
+
+/* ============================================================================
+ * prefers-reduced-motion 対応
+ * スクラッチ演出およびバウンス演出を停止し、即座に視認できる状態にする
+ * ============================================================================ */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  .scratch-reveal-target,
+  .scratch-reveal-target.is-revealed,
+  .scratch-reveal-target .scratch-reveal-media,
+  .scratch-reveal-target.is-revealed .scratch-reveal-media {
+    opacity: 1 !important;
+    transform: none !important;
+    -webkit-mask-image: none !important;
+    mask-image: none !important;
+    animation: none !important;
+    filter: none !important;
+  }
+
+  .scratch-stroke-overlay {
+    display: none !important;
+  }
+
+  .animate-gentle-float,
+  .animate-waku-first,
+  .animate-waku-second {
+    animation: none !important;
+  }
+
+  .animate-scroll-down-appear {
+    opacity: 1 !important;
+    transform: none !important;
+    pointer-events: auto !important;
+    animation: none !important;
+  }
+}
